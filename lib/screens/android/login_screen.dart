@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mapa_ufsm/screens/android/home_screen.dart';
+import 'package:mapa_ufsm/screens/android/cadastro.dart';
+import 'package:mapa_ufsm/screens/android/map_screen.dart';
 
 class LoginScreen extends StatelessWidget {
+  static const routeName = '/login';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +14,6 @@ class LoginScreen extends StatelessWidget {
 
       body: Center(
         child: Container(
-          color: Colors.green,
           margin: EdgeInsets.only(top: 8.0),
 
           child: ListView(
@@ -42,9 +44,7 @@ class LoginScreen extends StatelessWidget {
 
                 child: RaisedButton(
                   onPressed: (){
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => HomeScreen()
-                    ));
+                    Navigator.pushNamed(context, MapUniversidade.routeName);
                   },
                   padding: const EdgeInsets.all(0.0),
                   textColor: Colors.white,
@@ -56,10 +56,17 @@ class LoginScreen extends StatelessWidget {
               ),
 
               Center(
-                  child: Text('Ainda não cadastrado? Cadastrar!',
+                  child: GestureDetector(
+                      child: Text('Ainda não cadastrado? Cadastrar!',
                               style: TextStyle(color: Colors.blue),
-                  )
-              ),
+                      ),
+
+                      onTap: () => {
+                        Navigator.pushNamed(context, Cadastro.routeName)
+
+                     }
+              )
+      ),
 
             ],
           )
