@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class PontoInteresse extends StatelessWidget {
   static const routeName = '/ponto-interesse';
 
   @override
   Widget build(BuildContext context) {
+
+    print(http.get('http://localhost:8090/ponto') );
     return Scaffold(
       appBar: AppBar(
         title: Text('PONTO DE INTERESSE'),
@@ -17,6 +20,7 @@ class PontoInteresse extends StatelessWidget {
           child: ListView(
             children: [
               Container(
+                  
                 child: Image.asset('images/poli.jpg'),
               ),
               Container(
