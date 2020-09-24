@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapa_ufsm/screens/android/cadastro.dart';
 import 'package:mapa_ufsm/screens/android/login_screen.dart';
@@ -17,10 +17,10 @@ class MapUniversidade extends StatefulWidget {
 
 class _MyAppState extends State<MapUniversidade> {
   GoogleMapController mapController;
-  double lat = 0;
-  double long = 0;
+ 
   final LatLng _center = LatLng(0,0); 
   StreamSubscription<Position> positionStream; 
+  final Map<String, Marker> _markers = {};
 
   _MyAppState() {
     this.positionStream = getPositionStream().listen(
@@ -30,6 +30,7 @@ class _MyAppState extends State<MapUniversidade> {
         }
     );
   }
+
   void _setCenter(Position position) {
 
     this.mapController.animateCamera(
@@ -50,6 +51,17 @@ class _MyAppState extends State<MapUniversidade> {
 
   @override
   Widget build(BuildContext context) {
+    this._markers['ctism'] = Marker(
+          markerId: MarkerId('ctism'),
+          position: LatLng(-29.7115093,-53.7176967),
+          onTap: () {
+            Navigator.pushNamed(context, 
+                PontoInteresse.routeName,
+                arguments: 'CTISM',
+                );
+          },
+
+        );
     return Scaffold(
         appBar: AppBar(
             title: Text('LOCALIZAÇÃO ATUAL'),
@@ -112,9 +124,10 @@ class _MyAppState extends State<MapUniversidade> {
                           onMapCreated: _onMapCreated,
                           initialCameraPosition: CameraPosition(
                               target: _center,
-                              zoom: 11.0,
+                          //    zoom: 11.0,
                           ),
                           myLocationEnabled: true,
+                          markers: this._markers.values.toSet()
                       ),
                       );
   }

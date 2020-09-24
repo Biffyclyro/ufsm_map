@@ -7,6 +7,8 @@ class PontoInteresse extends StatelessWidget {
   static const routeName = '/ponto-interesse';
   Future<PontoInteresseModel> futurePonto;
 
+
+
   Future<PontoInteresseModel> fetchPonto() async {
 
     final response = await http.get('http://192.168.0.107:8090/ponto');
@@ -23,11 +25,14 @@ class PontoInteresse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final String args = ModalRoute.of(context).settings.arguments;
+
     futurePonto = fetchPonto();
+    print(args);
 
     return Scaffold(
         appBar: AppBar(
-            title: Text('PONTO DE INTERESSE'),
+            title: Text(args),
         ),
 
         body: Center(
