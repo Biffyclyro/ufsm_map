@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:mapa_ufsm/model.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapa_ufsm/screens/android/cadastro.dart';
 import 'package:mapa_ufsm/screens/android/login_screen.dart';
@@ -18,9 +21,26 @@ class MapUniversidade extends StatefulWidget {
 class _MyAppState extends State<MapUniversidade> {
   GoogleMapController mapController;
  
+  Future<List<Coordenadas>> coords;
   final LatLng _center = LatLng(0,0); 
   StreamSubscription<Position> positionStream; 
   final Map<String, Marker> _markers = {};
+
+
+  Future<List<Coordenadas>> fetchCoordenadas() async {
+
+    final response = await http.get("http://192.168.0.107:8090");
+    final coords = coordenadasFromJson(response.body);
+
+    if(response.statusCode == 200) {
+      return coords;
+    } else {
+      throw Exception("falha ao carregar o ponto");
+    }
+  }
+
+
+
 
   _MyAppState() {
     this.positionStream = getPositionStream().listen(
@@ -51,17 +71,20 @@ class _MyAppState extends State<MapUniversidade> {
 
   @override
   Widget build(BuildContext context) {
-    this._markers['ctism'] = Marker(
+    this.coords = this.fetchCoordenadas();
+
+
+      this._markers['ctism'] = Marker(
           markerId: MarkerId('ctism'),
           position: LatLng(-29.7115093,-53.7176967),
           onTap: () {
             Navigator.pushNamed(context, 
                 PontoInteresse.routeName,
-                arguments: 'CTISM',
-                );
+                arguments: 1,
+            );
           },
 
-        );
+      );
     return Scaffold(
         appBar: AppBar(
             title: Text('LOCALIZAÇÃO ATUAL'),
@@ -120,15 +143,30 @@ class _MyAppState extends State<MapUniversidade> {
                       )
                           ),
 
-                      body: GoogleMap(
-                          onMapCreated: _onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                              target: _center,
-                          //    zoom: 11.0,
-                          ),
-                          myLocationEnabled: true,
-                          markers: this._markers.values.toSet()
-                      ),
-                      );
-  }
+                      body: FutureBuilder<List<Coordenadas>> (
+                          future: this.coords,
+                          builder: (context, snapshot) {
+                            if(snapshot.hasData) {
+                              snapshot.data.forEach( (c) => { print(c.id)});
+                              return GoogleMap(
+                                  onMapCreated: _onMapCreated,
+                                  initialCameraPosition: CameraPosition(
+                                      target: _center,
+                                      //    zoom: 11.0,
+                                  ),
+                                  myLocationEnabled: true,
+                                  markers: this._markers.values.toSet()
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text("${snapshot.error}");
+                            }
+
+                            return CircularProgressIndicator();
+                          }
+
+
+
+  ),
+  );
+}
 }

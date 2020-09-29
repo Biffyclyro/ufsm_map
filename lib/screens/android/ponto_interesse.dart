@@ -9,9 +9,9 @@ class PontoInteresse extends StatelessWidget {
 
 
 
-  Future<PontoInteresseModel> fetchPonto() async {
+  Future<PontoInteresseModel> fetchPonto(int id) async {
 
-    final response = await http.get('http://192.168.0.107:8090/ponto');
+    final response = await http.get("http://192.168.0.107:8090/ponto/1");
     final pi = pontoInteresseModelFromJson(response.body);
 
     if(response.statusCode == 200) {
@@ -25,14 +25,14 @@ class PontoInteresse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final String args = ModalRoute.of(context).settings.arguments;
+    final int args = ModalRoute.of(context).settings.arguments;
 
-    futurePonto = fetchPonto();
+    futurePonto = fetchPonto(args);
     print(args);
 
     return Scaffold(
         appBar: AppBar(
-            title: Text(args),
+            title: Text('CTISM'),
         ),
 
         body: Center(
