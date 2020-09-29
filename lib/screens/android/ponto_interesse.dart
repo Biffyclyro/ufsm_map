@@ -11,7 +11,7 @@ class PontoInteresse extends StatelessWidget {
 
   Future<PontoInteresseModel> fetchPonto(int id) async {
 
-    final response = await http.get("http://192.168.0.107:8090/ponto/1");
+    final response = await http.get("http://192.168.0.107:8090/ponto/${id}");
     final pi = pontoInteresseModelFromJson(response.body);
 
     if(response.statusCode == 200) {
@@ -28,11 +28,11 @@ class PontoInteresse extends StatelessWidget {
     final int args = ModalRoute.of(context).settings.arguments;
 
     futurePonto = fetchPonto(args);
-    print(args);
+    //print(args);
 
     return Scaffold(
         appBar: AppBar(
-            title: Text('CTISM'),
+            title: Text('Ponto Interesse'),
         ),
 
         body: Center(
@@ -45,6 +45,9 @@ class PontoInteresse extends StatelessWidget {
                         margin: EdgeInsets.all(8.0),
                         child: ListView(
                             children: [
+                              Container (
+                                  child: Text(snapshot.data.nome),
+                              ),
                               Container(
 
                                   child: Image.asset(snapshot.data.img),
@@ -61,7 +64,7 @@ class PontoInteresse extends StatelessWidget {
                                   child: Text('Horário de funcionamento 00:00h às 00:00h'),
                               ),
                             ],
-                        ),
+                            ),
                         );
 
                   } else if (snapshot.hasError) {

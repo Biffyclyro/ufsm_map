@@ -29,7 +29,7 @@ class _MyAppState extends State<MapUniversidade> {
 
   Future<List<Coordenadas>> fetchCoordenadas() async {
 
-    final response = await http.get("http://192.168.0.107:8090");
+    final response = await http.get("http://192.168.0.107:8090/ponto");
     final coords = coordenadasFromJson(response.body);
 
     if(response.statusCode == 200) {
@@ -74,17 +74,6 @@ class _MyAppState extends State<MapUniversidade> {
     this.coords = this.fetchCoordenadas();
 
 
-      this._markers['ctism'] = Marker(
-          markerId: MarkerId('ctism'),
-          position: LatLng(-29.7115093,-53.7176967),
-          onTap: () {
-            Navigator.pushNamed(context, 
-                PontoInteresse.routeName,
-                arguments: 1,
-            );
-          },
-
-      );
     return Scaffold(
         appBar: AppBar(
             title: Text('LOCALIZAÇÃO ATUAL'),
@@ -147,7 +136,22 @@ class _MyAppState extends State<MapUniversidade> {
                           future: this.coords,
                           builder: (context, snapshot) {
                             if(snapshot.hasData) {
-                              snapshot.data.forEach( (c) => { print(c.id)});
+                              snapshot.data.forEach( (c) => { 
+
+                                this._markers[c.nome] = Marker(
+                                    markerId: MarkerId(c.nome),
+                                    position: LatLng(c.lat,c.lng),
+                                    onTap: () {
+                                      Navigator.pushNamed(context, 
+                                          PontoInteresse.routeName,
+                                          arguments:c.id,
+                                      );
+                                    },
+
+                                ),
+
+                                print(c.id)
+                              });
                               return GoogleMap(
                                   onMapCreated: _onMapCreated,
                                   initialCameraPosition: CameraPosition(
