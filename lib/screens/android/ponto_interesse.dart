@@ -58,12 +58,7 @@ class PontoInteresse extends StatelessWidget {
                                   child: Text(snapshot.data.descricao),
                               ),
 
-                              Container(
-
-                                  margin: EdgeInsets.only(top: 8.0),
-                                  child: Text('Horário de funcionamento 00:00h às 00:00h'),
-                              ),
-                            ],
+                                ],
                             ),
                         );
 

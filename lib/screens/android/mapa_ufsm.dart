@@ -4,6 +4,7 @@ import 'package:mapa_ufsm/screens/android/home_screen.dart';
 import 'package:mapa_ufsm/screens/android/login_screen.dart';
 import 'package:mapa_ufsm/screens/android/ponto_interesse.dart';
 import 'package:mapa_ufsm/screens/android/map_screen.dart';
+import 'package:mapa_ufsm/screens/android/busca_screen.dart';
 
 class MapaUFSM extends StatelessWidget {
   @override
@@ -13,7 +14,7 @@ class MapaUFSM extends StatelessWidget {
       routes: {
         MapUniversidade.routeName: (context) => MapUniversidade(),
         PontoInteresse.routeName: (context) => PontoInteresse(),
-        Cadastro.routeName: (context) => Cadastro(),
+        Busca.routeName: (context) => Busca(),
         LoginScreen.routeName: (context) => LoginScreen(),
       },
     );

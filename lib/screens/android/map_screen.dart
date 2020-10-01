@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapa_ufsm/screens/android/cadastro.dart';
 import 'package:mapa_ufsm/screens/android/login_screen.dart';
 import 'package:mapa_ufsm/screens/android/ponto_interesse.dart';
+import 'package:mapa_ufsm/screens/android/busca_screen.dart';
 import 'package:geolocator/geolocator.dart';
 
 
@@ -20,10 +21,10 @@ class MapUniversidade extends StatefulWidget {
 
 class _MyAppState extends State<MapUniversidade> {
   GoogleMapController mapController;
- 
+
   Future<List<Coordenadas>> coords;
-  final LatLng _center = LatLng(0,0); 
-  StreamSubscription<Position> positionStream; 
+  final LatLng _center = LatLng(0,0);
+  StreamSubscription<Position> positionStream;
   final Map<String, Marker> _markers = {};
 
 
@@ -44,7 +45,7 @@ class _MyAppState extends State<MapUniversidade> {
 
   _MyAppState() {
     this.positionStream = getPositionStream().listen(
-        (Position position) {
+            (Position position) {
           _setCenter(position);
 
         }
@@ -54,12 +55,13 @@ class _MyAppState extends State<MapUniversidade> {
   void _setCenter(Position position) {
 
     this.mapController.animateCamera(
-        CameraUpdate.newCameraPosition( 
-            CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 20,
-            )
-        ),
+      CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(-29.721931, -53.718147),
+            //target: LatLng(position.latitude, position.longitude),
+            zoom: 18,
+          )
+      ),
     );
 
   }
@@ -74,103 +76,88 @@ class _MyAppState extends State<MapUniversidade> {
     this.coords = this.fetchCoordenadas();
 
 
-    return Scaffold(
-        appBar: AppBar(
-            title: Text('LOCALIZAÇÃO ATUAL'),
+    return FutureBuilder<List<Coordenadas>> (
+        future: this.coords,
+        builder: (context, snapshot) {
+          if(snapshot.hasData) {
+            snapshot.data.forEach( (c) => {
 
-        ),
+              this._markers[c.nome] = Marker(
+                markerId: MarkerId(c.nome),
+                position: LatLng(c.lat,c.lng),
+                onTap: () {
+                  Navigator.pushNamed(context,
+                    PontoInteresse.routeName,
+                    arguments:c.id,
+                  );
+                },
 
-        drawer: Drawer(
-            child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  DrawerHeader(
-                      child: Text('Menu'),
-                      decoration: BoxDecoration(
+              ),
+
+              print(c.id)
+            });
+
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('LOCALIZAÇÃO ATUAL'),
+
+              ),
+
+              drawer: Drawer(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      DrawerHeader(
+                        child: Text('Menu'),
+                        decoration: BoxDecoration(
                           color: Colors.blue,
+                        ),
                       ),
-                  ),
-
-                  ListTile(
-                      title: Text('Cadastro'),
-                      onTap: () {
-                        Navigator.pushNamed(context, Cadastro.routeName);
-                      },
-                  ),
 
 
-                  ListTile(
-                      title: Text('Login'),
-                      onTap: () {
-                        Navigator.pushNamed(context, LoginScreen.routeName);
-                      },
-                  ),
+                      ListTile(
+                        title: Text('Buscar Ponto'),
+
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context,
+                              Busca.routeName,
+                              arguments: snapshot.data 
+                          );
+                        },
+                      ),
 
 
-                  ListTile(
-                      title: Text('Map'),
-                      onTap: () {
-                        Navigator.pushNamed(context, MapUniversidade.routeName);
-                      },
-                  ),
-
-                  ListTile(
-                      title: Text('PontoInteresse'),
-                      onTap: () {
-                        Navigator.pushNamed(context, PontoInteresse.routeName);
-                      },
-                  ),
-
-
-                  ListTile(
-                      title: Text('Close'),
-                      onTap: () {Navigator.pop(context);}
-                  )
-
-
-                      ],
+                      ListTile(
+                          title: Text('Close'),
+                          onTap: () {Navigator.pop(context);}
                       )
-                          ),
 
-                      body: FutureBuilder<List<Coordenadas>> (
-                          future: this.coords,
-                          builder: (context, snapshot) {
-                            if(snapshot.hasData) {
-                              snapshot.data.forEach( (c) => { 
 
-                                this._markers[c.nome] = Marker(
-                                    markerId: MarkerId(c.nome),
-                                    position: LatLng(c.lat,c.lng),
-                                    onTap: () {
-                                      Navigator.pushNamed(context, 
-                                          PontoInteresse.routeName,
-                                          arguments:c.id,
-                                      );
-                                    },
+                    ],
+                  )
+              ),
 
-                                ),
-
-                                print(c.id)
-                              });
-                              return GoogleMap(
-                                  onMapCreated: _onMapCreated,
-                                  initialCameraPosition: CameraPosition(
-                                      target: _center,
-                                      //    zoom: 11.0,
-                                  ),
-                                  myLocationEnabled: true,
-                                  markers: this._markers.values.toSet()
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text("${snapshot.error}");
-                            }
-
-                            return CircularProgressIndicator();
-                          }
+              body: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _center,
+                    //    zoom: 11.0,
+                  ),
+                  myLocationEnabled: true,
+                  markers: this._markers.values.toSet()
+              ),
 
 
 
-  ),
-  );
-}
+
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+
+          return CircularProgressIndicator();
+        }
+    );
+  }
 }
