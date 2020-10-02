@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mapa_ufsm/model.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mapa_ufsm/screens/android/cadastro.dart';
-import 'package:mapa_ufsm/screens/android/login_screen.dart';
 import 'package:mapa_ufsm/screens/android/ponto_interesse.dart';
 import 'package:mapa_ufsm/screens/android/busca_screen.dart';
 import 'package:geolocator/geolocator.dart';
